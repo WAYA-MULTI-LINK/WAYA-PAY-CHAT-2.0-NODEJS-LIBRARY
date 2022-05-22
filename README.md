@@ -26,11 +26,11 @@ const wayapay = new WayaPayRestClient(merchantId, publicKey, environment);
 ### Initialize Payment
 ```javascript
 wayapay.initializePayment({
-    amount: '157.05',
+    amount: '157.00',
     narration: 'Airtime Purchase',
-    firstName: 'Faiz',
-    lastName: 'Fasasi',
-    email: 'faizfasasi@gmail.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@gmail.com',
     phoneNumber: '09087654321'
 }).then((result)=> {
 	console.log(result);
