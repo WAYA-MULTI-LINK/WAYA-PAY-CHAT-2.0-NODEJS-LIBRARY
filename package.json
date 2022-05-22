@@ -1,0 +1,32 @@
+{
+  "name": "wayapay-rest-client",
+  "version": "1.0.0",
+  "description": "WayaPay Payment Gateway Rest API",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "mocha \"test/*.test.js\" --timeout 10000"
+  },
+  "keywords": [
+    "Api",
+    "wayapay",
+    "payment-gateway"
+  ],
+  "author": "Faiz Fasasi <faizfasasi@gmail.com> (https://www.linkedin.com/in/fasasifaiz)",
+  "license": "MIT",
+  "url": "https://github.com/phaheez/wayapay-rest-client/blob/main/LICENSE",
+  "dependencies": {
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phaheez/wayapay-rest-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phaheez/wayapay-rest-client/issues"
+  },
+  "homepage": "https://github.com/phaheez/wayapay-rest-client#readme"
+}
