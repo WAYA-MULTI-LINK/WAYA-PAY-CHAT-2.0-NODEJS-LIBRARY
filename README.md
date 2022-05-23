@@ -1,13 +1,13 @@
 # WayaPay
 
-WayaPay Rest Client Payment Gateway
+WAYA-PAY REST CLIENT NODEJS LIBRARY
 
 ## Installation
 
 To install the API, you need to type the following command in your terminal:
 
 ```javascript
-npm install wayapay-rest-client
+npm install --save wayapay-rest-client
 ```
 
 ## Usage
@@ -51,4 +51,4 @@ wayapay.verifyPayment(tranId)
 ```
 
 ## License
-[MIT](https://github.com/phaheez/wayapay-rest-client/blob/main/LICENSE)
+[MIT](https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/blob/main/LICENSE)

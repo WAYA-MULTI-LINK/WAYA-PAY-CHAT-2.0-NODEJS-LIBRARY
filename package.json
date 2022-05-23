@@ -13,7 +13,7 @@
   ],
   "author": "Faiz Fasasi <faizfasasi@gmail.com> (https://www.linkedin.com/in/fasasifaiz)",
   "license": "MIT",
-  "url": "https://github.com/phaheez/wayapay-rest-client/blob/main/LICENSE",
+  "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/blob/main/LICENSE",
   "dependencies": {
     "axios": "^0.27.2"
   },
@@ -23,10 +23,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/phaheez/wayapay-rest-client.git"
+    "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY.git"
   },
   "bugs": {
-    "url": "https://github.com/phaheez/wayapay-rest-client/issues"
+    "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/issues"
   },
-  "homepage": "https://github.com/phaheez/wayapay-rest-client#readme"
+  "homepage": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY#readme"
 }
