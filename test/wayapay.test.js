@@ -9,9 +9,9 @@ const publicKey = "WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70";
 const payload = {
     amount: '157.05',
     narration: 'Airtime Purchase',
-    firstName: 'Faiz',
-    lastName: 'Fasasi',
-    email: 'faizfasasi@gmail.com',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'johndoe@gmail.com',
     phoneNumber: '09087654321'
 }
 
