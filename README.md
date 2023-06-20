@@ -31,7 +31,8 @@ wayapay.initializePayment({
     firstName: 'John',
     lastName: 'Doe',
     email: 'johndoe@gmail.com',
-    phoneNumber: '09087654321'
+    phoneNumber: '09087654321',
+    currency: 'NGN'
 }).then((result)=> {
 	console.log(result);
 }).catch((error)=> {
