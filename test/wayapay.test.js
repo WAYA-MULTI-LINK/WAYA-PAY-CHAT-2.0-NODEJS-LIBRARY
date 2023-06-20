@@ -13,7 +13,8 @@ const payload = {
     firstName: 'John',
     lastName: 'Doe',
     email: 'johndoe@gmail.com',
-    phoneNumber: '09087654321'
+    phoneNumber: '09087654321',
+    currency: 'NGN'
 }
 
 describe("WayaPay Rest Client Test", () => {
