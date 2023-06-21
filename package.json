@@ -1,7 +1,7 @@
 {
-  "name": "wayapay-rest-client",
+  "name": "wayaquick-payment",
   "version": "1.0.3",
-  "description": "WayaPay Payment Gateway Rest API",
+  "description": "WayaQuick Payment Gateway Rest API",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha \"test/*.test.js\" --timeout 10000"
@@ -11,7 +11,7 @@
     "wayapay",
     "payment-gateway"
   ],
-  "author": "Faiz Fasasi <faizfasasi@gmail.com> (https://www.linkedin.com/in/fasasifaiz)",
+  "author": "Fatai",
   "license": "MIT",
   "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/blob/main/LICENSE",
   "dependencies": {

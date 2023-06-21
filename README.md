@@ -7,13 +7,13 @@ WAYA-PAY REST CLIENT NODEJS LIBRARY
 To install the API, you need to type the following command in your terminal:
 
 ```javascript
-npm install --save wayapay-rest-client
+npm install --save wayaquick-payment
 ```
 
 ## Usage
 
 ```javascript
-const WayaPayRestClient = require('wayapay-rest-client');
+const WayaPayRestClient = require('wayaquick-payment');
 
 const merchantId = "MER_qZaVZ1645265780823HOaZW";
 const publicKey = "WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70";
