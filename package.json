@@ -1,6 +1,6 @@
 {
   "name": "wayaquick-payment",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "WayaQuick Payment Gateway Rest API",
   "main": "./lib/index.js",
   "scripts": {
