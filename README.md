@@ -17,7 +17,7 @@ The SDK provides support for:
 # Installation
 
 ```bash
-npm install @wayapay/node-sdk
+npm install wayaquick-payment-sdk
 ```
 
 ---

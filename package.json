@@ -1,5 +1,5 @@
 {
-  "name": "@wayapay/node-sdk",
+  "name": "wayaquick-payment-sdk",
   "version": "1.0.0",
   "description": "Node.js SDK for the WayaPay payment gateway — collections, payouts, and account verification",
   "main": "index.js",
