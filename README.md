@@ -1,121 +1,236 @@
-# WayaPay
 
-WAYA-PAY REST CLIENT NODEJS LIBRARY
 
-## Installation
+# WayaPay Node.js SDK
+
+Official Node.js SDK for integrating with WayaPay payment APIs.
+
+The SDK provides support for:
+
+* Payment Collection
+* Payouts
+* Transaction Verification
+* Bank Listing
+* Account Verification
+
+---
+
+# Installation
 
 ```bash
-npm install --save wayaquick-payment
-```
-
-## Usage
-
-```javascript
-const WayaPayRestClient = require('wayaquick-payment');
-
-const wayapay = new WayaPayRestClient(
-  "MER_qZaVZ1645265780823HOaZW",         // merchantId
-  "WAYAPUBK_TEST_0x3442f06c8fa6454e90c5b1a518758c70", // publicKey (API Secret Key)
-  process.env.NODE_ENV                    // "development" | "production"
-);
+npm install @wayapay/node-sdk
 ```
 
 ---
 
-### 1. Initialize Payment
+# Requirements
 
-Initiates a payment collection and returns a hosted payment page URL. Redirect the customer to `paymentUrl` to complete the transaction.
+* Node.js >= 16
+
+---
+
+# Initialization
 
 ```javascript
-wayapay.initializePayment({
+const WayaPayClient = require("@wayapay/nodesdk");
+
+const client = new WayaPayClient({
+  merchantId: "your-merchant-id",
+  publicKey: "your-public-key",
+  environment: "development", // development | production
+});
+```
+
+---
+
+# Environment
+
+| Environment       | Value         |
+| ----------------- | ------------- |
+| Sandbox / Staging | `development` |
+| Production        | `production`  |
+
+---
+
+# Initialize Payment
+
+Initialize a payment collection request.
+
+## Example
+
+```javascript
+const response = await client.initializePayment({
   currency: "NGN",
-  amount: 1500.00,
-  callBackUrl: "https://yoursite.com/payment/callback",
-  idempotencyKey: "unique-key-001",
-  paymentRef: "your-unique-payment-ref",
+  amount: 5000,
+  callBackUrl: "https://yourapp.com/payment/callback",
+  idempotencyKey: `id-${Date.now()}`,
+  paymentRef: `PAY-${Date.now()}`,
+
   metadata: {
     firstName: "John",
     lastName: "Doe",
-    phoneNumber: "09087654321",
-    emailAddress: "johndoe@gmail.com",
-    cancelUrl: "https://yoursite.com/payment/cancel", // optional
+    phoneNumber: "08012345678",
+    emailAddress: "john@example.com",
+    cancelUrl: "https://yourapp.com/payment/cancel",
   },
-}).then((result) => {
-  console.log(result);
-}).catch((error) => {
-  console.log(error);
 });
+
+console.log(response);
 ```
+
+## Request Parameters
+
+| Field          | Type   | Required | Description                       |
+| -------------- | ------ | -------- | --------------------------------- |
+| currency       | String | Yes      | ISO currency code                 |
+| amount         | Number | Yes      | Amount to charge                  |
+| callBackUrl    | String | Yes      | Redirect URL after payment        |
+| idempotencyKey | String | Yes      | Prevent duplicate transactions    |
+| paymentRef     | String | Yes      | Unique merchant payment reference |
+| metadata       | Object | Yes      | Customer details                  |
+
+### Metadata
+
+| Field        | Type   | Required |
+| ------------ | ------ | -------- |
+| firstName    | String | Yes      |
+| lastName     | String | Yes      |
+| phoneNumber  | String | Yes      |
+| emailAddress | String | Yes      |
+| cancelUrl    | String | No       |
 
 ---
 
-### 2. Initiate Payout
+# Initiate Payout
 
-Sends funds from your merchant balance to a bank account. Always [verify the destination account](#5-verify-account) before calling this.
+Transfer funds to a bank account.
+
+## Example
 
 ```javascript
-wayapay.initiatePayout({
+const response = await client.initiatePayout({
   currency: "NGN",
-  amount: 1500.00,
-  idempotencyKey: "idem-payout-2026-05-13-001",
-  bankCode: "011",
+  amount: 1000,
+  idempotencyKey: `payout-${Date.now()}`,
+  bankCode: "058",
   accountNumber: "0123456789",
-}).then((result) => {
-  console.log(result);
-}).catch((error) => {
-  console.log(error);
+});
+
+console.log(response);
+```
+
+---
+
+# Verify Transaction
+
+Verify transaction status using transaction reference.
+
+## Example
+
+```javascript
+const response = await client.verifyTransaction(
+  "TRX-123456789"
+);
+
+console.log(response);
+```
+
+---
+
+# Fetch Bank List
+
+Retrieve supported banks.
+
+## Example
+
+```javascript
+const response = await client.fetchBankList();
+
+console.log(response);
+```
+
+---
+
+# Verify Account
+
+Verify bank account details before payout.
+
+## Example
+
+```javascript
+const response = await client.verifyAccount({
+  accountNumber: "0123456789",
+  bankCode: "058",
+});
+
+console.log(response);
+```
+
+---
+
+# Successful Response Format
+
+```json
+{
+  "status": true,
+  "data": {
+    "reference": "PAY-123456",
+    "authorizationUrl": "https://checkout.url"
+  }
+}
+```
+
+---
+
+# Error Response Format
+
+```json
+{
+  "status": false,
+  "message": "currency is required"
+}
+```
+
+---
+
+# Production Example
+
+```javascript
+const client = new WayaPayClient({
+  merchantId: process.env.WAYAPAY_MERCHANT_ID,
+  publicKey: process.env.WAYAPAY_SECRET_KEY,
+  environment: "production",
 });
 ```
 
 ---
 
-### 3. Verify Transaction
+# Security Recommendations
 
-Retrieves the current status of a transaction by reference. Use this after a payout or to confirm a payment collection.
+* Never expose your secret key publicly
+* Always use environment variables
+* Verify transactions server-side
+* Use idempotency keys for retries
 
-```javascript
-// transactionRef is returned from initializePayment or initiatePayout
-wayapay.verifyTransaction(transactionRef)
-  .then((result) => {
-    console.log(result);
-  }).catch((error) => {
-    console.log(error);
-  });
+---
+
+# Example `.env`
+
+```env
+WAYAPAY_MERCHANT_ID=your-merchant-id
+WAYAPAY_SECRET_KEY=your-secret-key
 ```
 
 ---
 
-### 4. Fetch Bank List
+# Support
 
-Returns the list of supported banks and their codes. Use these codes when calling `initiatePayout` or `verifyAccount`.
+For support and integration assistance:
 
-```javascript
-wayapay.fetchBankList()
-  .then((result) => {
-    console.log(result);
-  }).catch((error) => {
-    console.log(error);
-  });
-```
+* Website: [https://wayapay.ng](https://wayapay.ng)
+* Email: [support@wayapay.ng](mailto:support@wayapay.ng)
 
 ---
 
-### 5. Verify Account
+# License
 
-Resolves an account number against a bank and returns the registered account name. Always call this before initiating a payout.
-
-```javascript
-wayapay.verifyAccount({
-  accountNumber: "0123456789",
-  bankCode: "011",
-}).then((result) => {
-  console.log(result);
-}).catch((error) => {
-  console.log(error);
-});
-```
-
----
-
-## License
-[MIT](https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/blob/main/LICENSE)
+MIT License
