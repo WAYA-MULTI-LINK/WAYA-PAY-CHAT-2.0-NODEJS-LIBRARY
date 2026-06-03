@@ -1,22 +1,38 @@
 {
   "name": "wayaquick-payment-sdk",
-  "version": "1.0.0",
-  "description": "Node.js SDK for the WayaPay payment gateway — collections, payouts, and account verification",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Node.js client for the WayaPay Merchant API v2: collect, payout, accounts, identity.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
-    "index.js"
+    "src",
+    "index.d.ts",
+    "README.md"
   ],
+  "scripts": {
+    "example": "node examples/usage.js"
+  },
   "keywords": [
     "wayapay",
-    "payment",
-    "nigeria",
-    "fintech",
+    "wayaquick",
+    "payments",
     "payout",
-    "payment-gateway",
-    "ngn"
+    "collect",
+    "bvn",
+    "nigeria",
+    "fintech"
   ],
   "author": "Emmanuel Mustapha <emmanuel.mustapha@wayapaychat.com>",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY"
@@ -25,10 +41,5 @@
   "bugs": {
     "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/issues"
   },
-  "dependencies": {
-    "axios": "^1.7.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "license": "MIT"
 }
