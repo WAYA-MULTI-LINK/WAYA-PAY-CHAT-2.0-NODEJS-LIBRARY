@@ -1,29 +1,27 @@
-// Type definitions for the WayaPay Merchant API v2 client.
-
-export type WayaPayErrorType = 'api' | 'validation' | 'network' | 'timeout' | 'config';
-
-export class WayaPayError extends Error {
-  name: 'WayaPayError';
-  code: string | null;
-  status: number | null;
-  raw: unknown;
-  type: WayaPayErrorType;
-  constructor(
-    message: string,
-    opts?: { code?: string | null; status?: number | null; raw?: unknown; type?: WayaPayErrorType },
-  );
-}
-
-export function generateReference(prefix?: string): string;
+/** A fetch implementation compatible with the WHATWG `fetch`. */
+export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
 export interface WayaPayOptions {
+  /** Your MER_... merchant id. */
   merchantId: string;
+  /** WAYASECK_TEST_... on staging, WAYASECK_... on live. */
   secretKey: string;
+  /** Selects the built-in base URL. Defaults to `production`. */
   environment?: 'staging' | 'production';
+  /** Override the base URL entirely (takes precedence over `environment`). */
   baseUrl?: string;
+  /** Per-request timeout in milliseconds. Defaults to 30000. */
   timeout?: number;
+  /** Max retries. Applies to GET only. Defaults to 2. */
   maxRetries?: number;
-  fetch?: typeof fetch;
+  /** Inject a fetch implementation (DI, tests). Defaults to `globalThis.fetch`. */
+  fetch?: FetchLike;
+}
+
+/** Options accepted by the low-level `request` method. */
+export interface RequestOptions {
+  body?: unknown;
+  query?: Record<string, unknown>;
 }
 
 export interface Bank {
@@ -194,48 +192,3 @@ export interface HistoryResult {
   totalElements: number;
   totalPages: number;
 }
-
-export class WayaPay {
-  constructor(opts: WayaPayOptions);
-
-  merchantId: string;
-  secretKey: string;
-  baseUrl: string;
-  timeout: number;
-  maxRetries: number;
-
-  request<T = unknown>(
-    method: string,
-    path: string,
-    opts?: { body?: unknown; query?: Record<string, unknown> },
-  ): Promise<T>;
-
-  banks: {
-    list(): Promise<Bank[]>;
-  };
-
-  accounts: {
-    verify(input: VerifyAccountInput): Promise<VerifyAccountResult>;
-    createDynamic(input: CreateDynamicAccountInput): Promise<DynamicAccount>;
-  };
-
-  identity: {
-    verifyBvn(input: string | { bvn: string }): Promise<BvnResult>;
-  };
-
-  payouts: {
-    initiate(input: PayoutInput): Promise<PayoutResult>;
-  };
-
-  collect: {
-    create(input: CollectInput): Promise<CollectResult>;
-  };
-
-  transactions: {
-    verify(input: string | { reference: string }): Promise<TransactionResult>;
-    history(filter?: HistoryFilter): Promise<HistoryResult>;
-    historyAll(filter?: HistoryFilter): AsyncGenerator<HistoryItem, void, unknown>;
-  };
-}
-
-export default WayaPay;

@@ -1,26 +1,35 @@
 {
   "name": "wayaquick-payment-sdk",
   "version": "2.0.0",
-  "description": "Node.js client for the WayaPay Merchant API v2: collect, payout, accounts, identity.",
+  "description": "Node.js/TypeScript client for the WayaPay Merchant API v2: collect, payout, accounts, identity, transactions.",
   "type": "module",
-  "main": "./src/index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "engines": {
     "node": ">=18"
   },
   "files": [
-    "src",
-    "index.d.ts",
-    "README.md"
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "scripts": {
-    "example": "node examples/usage.js"
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:live": "WAYA_LIVE=1 vitest run tests/live.test.ts",
+    "sample": "tsx samples/usage.ts"
   },
   "keywords": [
     "wayapay",
@@ -30,9 +39,10 @@
     "collect",
     "bvn",
     "nigeria",
-    "fintech"
+    "fintech",
+    "typescript"
   ],
-  "author": "Emmanuel Mustapha <emmanuel.mustapha@wayapaychat.com>",
+  "author": "WayaPay",
   "repository": {
     "type": "git",
     "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY"
@@ -41,5 +51,11 @@
   "bugs": {
     "url": "https://github.com/WAYA-MULTI-LINK/WAYA-PAY-CHAT-2.0-NODEJS-LIBRARY/issues"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
 }

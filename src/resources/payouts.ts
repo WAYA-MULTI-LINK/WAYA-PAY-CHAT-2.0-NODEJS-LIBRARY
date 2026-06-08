@@ -1,0 +1,25 @@
+import type { WayaPay } from '../client.js';
+import { generateReference, requireFields } from '../util.js';
+import type { PayoutInput, PayoutResult } from '../types.js';
+
+export class Payouts {
+  constructor(private readonly client: WayaPay) {}
+
+  /**
+   * Initiate a bank transfer. Defaults `currency` to `NGN` and auto-generates a
+   * `reference` when omitted. A `PROCESSING` status means accepted, not settled —
+   * verify with the reference afterwards. This is a write: it never auto-retries.
+   *
+   * `POST /payment-payout/initiate`
+   */
+  async initiate(input: PayoutInput): Promise<PayoutResult> {
+    const body: Record<string, unknown> = { currency: 'NGN', ...input };
+    if (!body['reference']) body['reference'] = generateReference('PAYOUT');
+    requireFields(
+      body,
+      ['amount', 'currency', 'accountNumber', 'bankCode', 'accountName', 'reference', 'narration'],
+      'payout',
+    );
+    return this.client.request<PayoutResult>('POST', '/payment-payout/initiate', { body });
+  }
+}
