@@ -10,7 +10,7 @@ async function main(): Promise<void> {
   const client = new WayaPay({
     merchantId: process.env.WAYA_MERCHANT_ID ?? '',
     secretKey: process.env.WAYA_SECRET_KEY ?? '',
-    environment: 'staging', // flip to 'production' when steady
+    // Defaults to the production base URL; pass `baseUrl` to override.
   });
 
   // 1. Banks (GET — auto retried on transient failures).

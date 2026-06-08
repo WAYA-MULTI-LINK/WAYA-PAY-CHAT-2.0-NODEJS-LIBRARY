@@ -8,10 +8,7 @@ import { Payouts } from './resources/payouts.js';
 import { Collect } from './resources/collect.js';
 import { Transactions } from './resources/transactions.js';
 
-const ENVIRONMENTS = {
-  staging: 'https://services.staging.wayapay.ng/merchant-middleware/api/v2',
-  production: 'https://services.wayapay.ng/merchant-middleware/api/v2',
-} as const;
+const PRODUCTION_BASE_URL = 'https://services.wayapay.ng/merchant-middleware/api/v2';
 
 interface Envelope<T> {
   success?: boolean;
@@ -46,7 +43,6 @@ export class WayaPay {
     const {
       merchantId,
       secretKey,
-      environment = 'production',
       baseUrl,
       timeout = 30000,
       maxRetries = 2,
@@ -58,7 +54,7 @@ export class WayaPay {
 
     this.merchantId = merchantId;
     this.secretKey = secretKey;
-    this.baseUrl = (baseUrl || ENVIRONMENTS[environment] || ENVIRONMENTS.production).replace(/\/+$/, '');
+    this.baseUrl = (baseUrl || PRODUCTION_BASE_URL).replace(/\/+$/, '');
     this.timeout = timeout;
     this.maxRetries = maxRetries;
 

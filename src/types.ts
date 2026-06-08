@@ -4,11 +4,9 @@ export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Res
 export interface WayaPayOptions {
   /** Your MER_... merchant id. */
   merchantId: string;
-  /** WAYASECK_TEST_... on staging, WAYASECK_... on live. */
+  /** WAYASECK_TEST_... while testing, WAYASECK_... on live. */
   secretKey: string;
-  /** Selects the built-in base URL. Defaults to `production`. */
-  environment?: 'staging' | 'production';
-  /** Override the base URL entirely (takes precedence over `environment`). */
+  /** Override the API base URL. Defaults to the production URL. */
   baseUrl?: string;
   /** Per-request timeout in milliseconds. Defaults to 30000. */
   timeout?: number;

@@ -65,7 +65,7 @@ Live tests hit the real WayaPay API and are excluded from the default run (see `
 ```bash
 export WAYA_MERCHANT_ID=MER_...
 export WAYA_SECRET_KEY=WAYASECK_TEST_...
-# optional: export WAYA_ENV=production   (defaults to staging)
+# live tests run against the production API; use test credentials
 
 npm run test:live
 ```

@@ -95,7 +95,6 @@ export function makeClient(fetch: FetchLike, extra: Partial<WayaPayOptions> = {}
   return new WayaPay({
     merchantId: 'MER_TEST',
     secretKey: 'WAYASECK_TEST_key',
-    environment: 'staging',
     maxRetries: 0,
     fetch,
     ...extra,

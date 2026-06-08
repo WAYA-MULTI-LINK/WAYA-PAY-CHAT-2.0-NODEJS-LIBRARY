@@ -39,9 +39,9 @@ describe('construction', () => {
     }
   });
 
-  it('selects the staging base URL', () => {
-    const c = new WayaPay({ merchantId: 'm', secretKey: 's', environment: 'staging' });
-    expect(c.baseUrl).toContain('services.staging.wayapay.ng');
+  it('honors a baseUrl override and trims trailing slashes', () => {
+    const c = new WayaPay({ merchantId: 'm', secretKey: 's', baseUrl: 'https://mock.test/api/' });
+    expect(c.baseUrl).toBe('https://mock.test/api');
   });
 
   it('defaults to the production base URL', () => {

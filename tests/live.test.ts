@@ -5,7 +5,7 @@
  *   WAYA_LIVE=1 WAYA_MERCHANT_ID=MER_... WAYA_SECRET_KEY=WAYASECK_TEST_... \
  *     npm run test:live
  *
- * They default to staging; set WAYA_ENV=production to target live.
+ * They run against the production API; use test credentials.
  */
 import { describe, expect, it } from 'vitest';
 import { WayaPay } from '../src/index.js';
@@ -17,7 +17,6 @@ function client(): WayaPay {
   return new WayaPay({
     merchantId: merchantId!,
     secretKey: secretKey!,
-    environment: process.env.WAYA_ENV === 'production' ? 'production' : 'staging',
   });
 }
 

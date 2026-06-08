@@ -22,13 +22,12 @@ import { WayaPay } from 'wayaquick-payment-sdk';
 const client = new WayaPay({
   merchantId: process.env.WAYA_MERCHANT_ID!,   // MER_...
   secretKey: process.env.WAYA_SECRET_KEY!,     // WAYASECK_TEST_... or WAYASECK_...
-  environment: 'staging',                      // 'staging' or 'production'
 });
 
 const banks = await client.banks.list();
 ```
 
-Test against `staging` until your integration is steady, then change one word to `production`. The rest of your code stays the same.
+The client targets the production base URL. Test with a `WAYASECK_TEST_...` key, then swap in your live `WAYASECK_...` key when ready — the rest of your code stays the same. Pass `baseUrl` to point at a different host.
 
 ## What you get back
 
@@ -216,7 +215,7 @@ npm run typecheck   # tsc --noEmit
 
 ## Before you go live
 
-On the merchant dashboard: finish KYC, grab your Merchant ID, generate your secret key under **Settings → API Keys and Webhooks**, whitelist your server IPs, and configure payment preferences. Payment Collect refuses to work until the last two are done. Then switch `environment: 'production'` — the rest of your code stays the same.
+On the merchant dashboard: finish KYC, grab your Merchant ID, generate your secret key under **Settings → API Keys and Webhooks**, whitelist your server IPs, and configure payment preferences. Payment Collect refuses to work until the last two are done. Then swap your `WAYASECK_TEST_...` key for the live `WAYASECK_...` key — the rest of your code stays the same.
 
 ## Contributing
 

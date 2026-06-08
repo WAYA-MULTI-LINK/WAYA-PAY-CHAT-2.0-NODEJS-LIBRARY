@@ -13,7 +13,7 @@ source, compiled to `dist/` JavaScript with bundled `.d.ts`, plus `tests/` and
 
 ### Added
 
-- `WayaPay` client constructed from a typed options object (`merchantId`, `secretKey`, `environment`, `baseUrl`, `timeout`, `maxRetries`, `fetch`).
+- `WayaPay` client constructed from a typed options object (`merchantId`, `secretKey`, `baseUrl`, `timeout`, `maxRetries`, `fetch`). Defaults to the production base URL.
 - `banks.list()` — returns all supported banks and their CBN codes.
 - `accounts.verify()` — resolves an account number to its registered name; requires `bankCode` unless `enquiryType` is `WAYABANK`.
 - `accounts.createDynamic()` — mints a virtual NUBAN; defaults `mode` to `ONE_TIME` and auto-generates `referenceId`.
