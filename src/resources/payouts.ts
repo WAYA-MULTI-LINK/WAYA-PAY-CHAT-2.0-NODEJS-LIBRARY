@@ -1,6 +1,6 @@
 import type { WayaPay } from '../client.js';
 import { generateReference, requireFields } from '../util.js';
-import type { PayoutInput, PayoutResult } from '../types.js';
+import type { PayoutInput, PayoutResult, PayoutStatusResult } from '../types.js';
 
 export class Payouts {
   constructor(private readonly client: WayaPay) {}
@@ -21,5 +21,19 @@ export class Payouts {
       'payout',
     );
     return this.client.request<PayoutResult>('POST', '/payment-payout/initiate', { body });
+  }
+
+  /**
+   * Get the latest status of a payout by the `reference` you sent at initiation.
+   * Scoped to the authenticated merchant — a reference belonging to another
+   * merchant (or a different environment) returns 404. Interpret the returned
+   * `status` with `payoutOutcome` / `isPayoutTerminal`.
+   *
+   * `GET /payment-payout/status/{reference}`
+   */
+  async getStatus(reference: string): Promise<PayoutStatusResult> {
+    requireFields({ reference }, ['reference'], 'payout status');
+    const path = `/payment-payout/status/${encodeURIComponent(reference)}`;
+    return this.client.request<PayoutStatusResult>('GET', path);
   }
 }

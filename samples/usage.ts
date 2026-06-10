@@ -4,7 +4,16 @@
 // In your own project, import from the package instead of the source:
 //   import { WayaPay, WayaPayError, generateReference } from 'wayaquick-payment-sdk';
 
-import { WayaPay, WayaPayError, generateReference } from '../src/index.js';
+import { createHmac } from 'node:crypto';
+import {
+  WayaPay,
+  WayaPayError,
+  WayaPayWebhookError,
+  generateReference,
+  payoutOutcome,
+  collectionOutcome,
+  shouldFulfil,
+} from '../src/index.js';
 
 async function main(): Promise<void> {
   const client = new WayaPay({
@@ -48,6 +57,20 @@ async function main(): Promise<void> {
   });
   console.log('Payout:', payout.payoutReference, payout.status);
 
+  // 5b. Check payout status — reconcile by the reference you sent at initiation.
+  const payoutStatus = await client.payouts.getStatus(payout.merchantReference ?? payout.payoutReference);
+  switch (payoutOutcome(payoutStatus.status)) {
+    case 'succeeded':
+      console.log('Payout delivered.');
+      break;
+    case 'reversed':
+      console.log('Payout reversed — wallet re-credited.');
+      break;
+    case 'reconciling':
+      console.log('Payout still reconciling — check again later.');
+      break;
+  }
+
   // 6. Create a payment link.
   const link = await client.collect.create({
     paymentLinkName: 'Order #1234',
@@ -56,6 +79,13 @@ async function main(): Promise<void> {
     redirectLink: 'https://merchant.example.com/callback',
   });
   console.log('Send customer to:', link.shortUrl);
+
+  // 6b. Check collection status — the pull/safety-net path alongside the webhook.
+  const collectStatus = await client.collect.getStatus(link.paymentLinkReference);
+  console.log('Collection status:', collectStatus.status, '(paid', collectStatus.amountPaid, ')');
+  if (collectionOutcome(collectStatus.status) === 'succeeded') {
+    console.log('Funds confirmed — fulfil order using refNo', collectStatus.refNo);
+  }
 
   // 7. Verify a transaction. Trust status, not your own assumptions.
   const txn = await client.transactions.verify(payout.payoutReference);
@@ -72,6 +102,41 @@ async function main(): Promise<void> {
     void t;
   }
   console.log('Reconciled:', count, 'transactions');
+
+  // 9. Verify a webhook (offline demo). In production WayaPay POSTs this to your
+  //    HTTPS endpoint; here we sign a sample body locally to show the flow end to end.
+  const webhookSecret = 'WAYASECK_TEST_demo_webhook_secret';
+  const rawBody = JSON.stringify({
+    OrderId: '1779662251460508970',
+    Amount: 1500.0,
+    Fee: 15.0,
+    Currency: 'NGN',
+    Status: 'SUCCESSFUL',
+    productName: 'CARD',
+    customer: { email: 'john@example.com' },
+    merchantId: 'MER_xyz',
+    recurrentPayment: false,
+  });
+  const timestamp = Date.now().toString();
+  const signature = createHmac('sha256', webhookSecret).update(`${timestamp}.${rawBody}`).digest('base64');
+
+  // A client constructed with `webhookSecret` can drop the secret arg:
+  //   const verifier = new WayaPay({ ..., webhookSecret });
+  //   verifier.webhooks.constructEvent(rawBody, timestamp, signature);
+  const verifier = new WayaPay({ merchantId: client.merchantId, secretKey: client.secretKey, webhookSecret });
+  try {
+    const evt = verifier.webhooks.constructEvent(rawBody, timestamp, signature);
+    console.log(`Webhook verified: ${evt.orderId} — ${evt.status} (${evt.amount} ${evt.currency})`);
+    if (shouldFulfil(evt)) {
+      console.log('  Fulfil order — idempotency key', evt.orderId);
+    }
+  } catch (e) {
+    if (e instanceof WayaPayWebhookError) {
+      console.error('Rejected webhook:', e.message);
+    } else {
+      throw e;
+    }
+  }
 }
 
 main().catch((err: unknown) => {

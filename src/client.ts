@@ -7,6 +7,7 @@ import { Identity } from './resources/identity.js';
 import { Payouts } from './resources/payouts.js';
 import { Collect } from './resources/collect.js';
 import { Transactions } from './resources/transactions.js';
+import { Webhooks } from './resources/webhooks.js';
 
 const PRODUCTION_BASE_URL = 'https://services.wayapay.ng/merchant-middleware/api/v2';
 
@@ -30,6 +31,7 @@ export class WayaPay {
   readonly baseUrl: string;
   readonly timeout: number;
   readonly maxRetries: number;
+  readonly webhookSecret?: string;
   private readonly fetch: FetchLike;
 
   readonly banks: Banks;
@@ -38,6 +40,7 @@ export class WayaPay {
   readonly payouts: Payouts;
   readonly collect: Collect;
   readonly transactions: Transactions;
+  readonly webhooks: Webhooks;
 
   constructor(opts: WayaPayOptions) {
     const {
@@ -47,6 +50,7 @@ export class WayaPay {
       timeout = 30000,
       maxRetries = 2,
       fetch: customFetch,
+      webhookSecret,
     } = opts ?? ({} as WayaPayOptions);
 
     if (!merchantId) throw new WayaPayError('merchantId is required', { type: 'config' });
@@ -57,6 +61,7 @@ export class WayaPay {
     this.baseUrl = (baseUrl || PRODUCTION_BASE_URL).replace(/\/+$/, '');
     this.timeout = timeout;
     this.maxRetries = maxRetries;
+    this.webhookSecret = webhookSecret;
 
     const resolvedFetch = customFetch ?? globalThis.fetch;
     if (typeof resolvedFetch !== 'function') {
@@ -72,6 +77,7 @@ export class WayaPay {
     this.payouts = new Payouts(this);
     this.collect = new Collect(this);
     this.transactions = new Transactions(this);
+    this.webhooks = new Webhooks(webhookSecret);
   }
 
   /**

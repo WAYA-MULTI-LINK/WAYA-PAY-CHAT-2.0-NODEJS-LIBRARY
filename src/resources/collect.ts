@@ -1,6 +1,6 @@
 import type { WayaPay } from '../client.js';
 import { requireFields } from '../util.js';
-import type { CollectInput, CollectResult } from '../types.js';
+import type { CollectInput, CollectResult, CollectStatusResult } from '../types.js';
 
 export class Collect {
   constructor(private readonly client: WayaPay) {}
@@ -29,5 +29,20 @@ export class Collect {
       requireFields(body, ['expiryDate'], 'payment collect (expiry)');
     }
     return this.client.request<CollectResult>('POST', '/payment-collect/initiate', { body });
+  }
+
+  /**
+   * Get the current state of a deposit by its `refNo` (the gateway
+   * transactionId / webhook orderId). Use for reconciliation alongside the
+   * deposit webhook — the webhook is the primary signal; this is the pull /
+   * safety-net path. Interpret the returned `status` with `collectionOutcome` /
+   * `isCollectionTerminal`.
+   *
+   * `GET /payment-collect/status/{refNo}`
+   */
+  async getStatus(refNo: string): Promise<CollectStatusResult> {
+    requireFields({ refNo }, ['refNo'], 'collect status');
+    const path = `/payment-collect/status/${encodeURIComponent(refNo)}`;
+    return this.client.request<CollectStatusResult>('GET', path);
   }
 }
