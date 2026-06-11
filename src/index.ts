@@ -2,12 +2,9 @@ export { WayaPay, WayaPay as default } from './client.js';
 export { WayaPayError } from './errors.js';
 export { generateReference } from './util.js';
 
-export { Banks } from './resources/banks.js';
-export { Accounts } from './resources/accounts.js';
 export { Identity } from './resources/identity.js';
 export { Payouts } from './resources/payouts.js';
 export { Collect } from './resources/collect.js';
-export { Transactions } from './resources/transactions.js';
 export { Webhooks } from './resources/webhooks.js';
 
 export {
@@ -44,8 +41,6 @@ export type {
   EnquiryType,
   VerifyAccountInput,
   VerifyAccountResult,
-  CreateDynamicAccountInput,
-  DynamicAccount,
   BvnResult,
   PayoutInput,
   PayoutResult,
@@ -55,8 +50,4 @@ export type {
   PayoutStatusResult,
   WebhookEvent,
   WebhookCustomer,
-  TransactionResult,
-  HistoryItem,
-  HistoryFilter,
-  HistoryResult,
 } from './types.js';

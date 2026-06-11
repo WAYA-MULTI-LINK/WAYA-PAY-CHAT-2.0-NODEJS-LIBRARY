@@ -24,7 +24,7 @@ const client = new WayaPay({
   secretKey: process.env.WAYA_SECRET_KEY!,     // WAYASECK_TEST_... or WAYASECK_...
 });
 
-const banks = await client.banks.list();
+const banks = await client.payouts.listBanks();
 ```
 
 The client targets the production base URL. Test with a `WAYASECK_TEST_...` key, then swap in your live `WAYASECK_...` key when ready — the rest of your code stays the same. Pass `baseUrl` to point at a different host.
@@ -34,14 +34,14 @@ The client targets the production base URL. Test with a `WAYASECK_TEST_...` key,
 Every method returns the envelope's `data` payload directly, already unwrapped and typed. The `success`, `code`, and `timestamp` fields only matter when something fails — and failures throw — so the happy path stays clean:
 
 ```ts
-const acct = await client.accounts.verify({ accountNumber: '0123456789', bankCode: '044' });
+const acct = await client.payouts.verifyAccount({ accountNumber: '0123456789', bankCode: '044' });
 console.log(acct.accountName); // typed VerifyAccountResult — straight to the useful part
 ```
 
 ## List banks
 
 ```ts
-const banks = await client.banks.list();
+const banks = await client.payouts.listBanks();
 // Bank[] — each has { code, name, id, status }
 ```
 
@@ -50,7 +50,7 @@ const banks = await client.banks.list();
 Always verify before sending a payout — confirms the account exists and returns the registered name.
 
 ```ts
-const result = await client.accounts.verify({
+const result = await client.payouts.verifyAccount({
   accountNumber: '0123456789',
   bankCode: '044',          // omit only when enquiryType is 'WAYABANK'
   enquiryType: 'OTHERS',    // default
@@ -70,6 +70,10 @@ const payout = await client.payouts.initiate({
   // currency defaults to 'NGN', reference auto-generated if omitted
 });
 // payout.status === 'PROCESSING' means accepted, not settled
+
+// Reconcile by the reference you sent at initiation:
+const status = await client.payouts.getStatus(payout.merchantReference);
+// interpret status.status with payoutOutcome / isPayoutTerminal
 ```
 
 ## Collect a payment
@@ -83,21 +87,13 @@ const link = await client.collect.create({
   // paymentLinkType defaults to 'ONE_TIME_PAYMENT_LINK', currency to 'NGN'
 });
 // Send the customer to link.shortUrl. Keep link.paymentLinkReference to reconcile.
+
+// Reconcile a deposit by its refNo (the gateway transactionId / webhook orderId):
+const collectStatus = await client.collect.getStatus(refNo);
+// interpret collectStatus.status with collectionOutcome / isCollectionTerminal
 ```
 
 If you set `linkCanExpire: true`, you must also pass `expiryDate`. The library enforces it before the call leaves your server. `collect.create` also fails unless you have whitelisted your server IPs and configured payment preferences on the dashboard.
-
-## Mint a virtual account
-
-```ts
-const vacct = await client.accounts.createDynamic({
-  accountName: 'ORDER-7821 PAYMENT',
-  customerId: 'CUST-98765',
-  purpose: 'Order payment',
-  // referenceId auto-generated if omitted; mode defaults to 'ONE_TIME'
-});
-// Hand vacct.virtualAccountNumber to the customer.
-```
 
 ## BVN identity check
 
@@ -109,40 +105,24 @@ console.log(bvn.firstName, bvn.lastName);
 
 BVN data is sensitive personal information. Store, transmit, and log it only as your data-protection obligations allow.
 
-## Verify a transaction / reconcile
-
-```ts
-// Verify one transaction
-const txn = await client.transactions.verify('WQ-TXN-9F8E7D6C');
-// txn.status === 'SUCCESS' means settled
-
-// One page of history
-const page = await client.transactions.history({ page: 0, size: 20, status: 'SUCCESS' });
-
-// Or stream every matching transaction across all pages (built for reconciliation)
-for await (const t of client.transactions.historyAll({ status: 'SUCCESS' })) {
-  // process t — the SDK walks the pages for you lazily
-}
-```
-
-A payout returning `PROCESSING` is accepted, not settled. Poll `transactions.verify` with the reference until you see `SUCCESS`.
+A payout returning `PROCESSING` is accepted, not settled. Poll `payouts.getStatus` with the reference until it reaches a terminal status.
 
 ## The resources
 
 | Resource | Method | Endpoint |
 |---|---|---|
-| `client.banks` | `list` | `GET /account-enquiry/get-bank-list` |
-| `client.accounts` | `verify` | `POST /account-enquiry/verify-account` |
-| `client.accounts` | `createDynamic` | `POST /account-enquiry/create-dynamic-account` |
-| `client.identity` | `verifyBvn` | `POST /identity-verification/bvn` |
+| `client.payouts` | `listBanks` | `GET /get-bank-list` |
+| `client.payouts` | `verifyAccount` | `POST /verify-account` |
 | `client.payouts` | `initiate` | `POST /payment-payout/initiate` |
+| `client.payouts` | `getStatus` | `GET /payment-payout/status/{reference}` |
 | `client.collect` | `create` | `POST /payment-collect/initiate` |
-| `client.transactions` | `verify` | `GET /transaction/verify` |
-| `client.transactions` | `history` / `historyAll` | `GET /transaction/history` |
+| `client.collect` | `getStatus` | `GET /payment-collect/status/{refNo}` |
+| `client.identity` | `verifyBvn` | `POST /identity-verification/bvn` |
+| `client.webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks) |
 
 ## References
 
-In v2, the unique `reference` you supply is your dedup and reconciliation key. Generate a fresh one per logical operation so retries map to the original record instead of spawning duplicates. The library auto-fills it on payouts and dynamic accounts when you leave it out, or generate your own:
+In v2, the unique `reference` you supply is your dedup and reconciliation key. Generate a fresh one per logical operation so retries map to the original record instead of spawning duplicates. The library auto-fills it on payouts when you leave it out, or generate your own:
 
 ```ts
 import { generateReference } from 'wayaquick-payment-sdk';
@@ -179,7 +159,7 @@ Configurable per client:
 new WayaPay({ merchantId, secretKey, timeout: 30000, maxRetries: 2 });
 ```
 
-Retries apply to **GET only** (bank list, verify, history) and only on timeouts, network errors, 429, or 5xx, with exponential backoff. Writes (payout, collect, dynamic account, BVN) never auto-retry, because retrying a write you are unsure about is how you pay someone twice. Retry those yourself, with the same `reference`, once you have checked the transaction status.
+Retries apply to **GET only** (bank list, status checks) and only on timeouts, network errors, 429, or 5xx, with exponential backoff. Writes (payout, account verify, collect, BVN) never auto-retry, because retrying a write you are unsure about is how you pay someone twice. Retry those yourself, with the same `reference`, once you have checked the transaction status.
 
 ## Inject your own fetch (DI, testing)
 

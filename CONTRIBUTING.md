@@ -15,22 +15,18 @@ src/                          # TypeScript source — compiled to dist/ on build
   util.ts                     # generateReference (public), requireFields/backoff (internal)
   types.ts                    # All request/response interfaces
   resources/
-    banks.ts                  # banks.list
-    accounts.ts               # accounts.verify, accounts.createDynamic
+    payouts.ts                # payouts.listBanks, verifyAccount, initiate, getStatus
+    collect.ts                # collect.create, getStatus
     identity.ts               # identity.verifyBvn
-    payouts.ts                # payouts.initiate
-    collect.ts                # collect.create
-    transactions.ts           # transactions.verify, history, historyAll
+    webhooks.ts               # webhooks.constructEvent, verifySignature
 
 tests/                        # Vitest suite (black-box, via injected fetch)
   helpers.ts                  # stub/capturing/sequence fetch fakes + client builder
   client.test.ts              # Construction, headers, envelope, errors, retry, helpers
-  banks.test.ts               # ... one file per resource
-  accounts.test.ts
+  payouts.test.ts             # ... one file per resource
   identity.test.ts
-  payouts.test.ts
   collect.test.ts
-  transactions.test.ts
+  webhook.test.ts
   live.test.ts                # Hits the real API — excluded from the default run
 
 samples/

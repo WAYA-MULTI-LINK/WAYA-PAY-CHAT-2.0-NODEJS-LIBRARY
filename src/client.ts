@@ -1,12 +1,9 @@
 import { WayaPayError } from './errors.js';
 import { backoff } from './util.js';
 import type { FetchLike, RequestOptions, WayaPayOptions } from './types.js';
-import { Banks } from './resources/banks.js';
-import { Accounts } from './resources/accounts.js';
 import { Identity } from './resources/identity.js';
 import { Payouts } from './resources/payouts.js';
 import { Collect } from './resources/collect.js';
-import { Transactions } from './resources/transactions.js';
 import { Webhooks } from './resources/webhooks.js';
 
 const PRODUCTION_BASE_URL = 'https://services.wayapay.ng/merchant-middleware/api/v2';
@@ -34,12 +31,9 @@ export class WayaPay {
   readonly webhookSecret?: string;
   private readonly fetch: FetchLike;
 
-  readonly banks: Banks;
-  readonly accounts: Accounts;
   readonly identity: Identity;
   readonly payouts: Payouts;
   readonly collect: Collect;
-  readonly transactions: Transactions;
   readonly webhooks: Webhooks;
 
   constructor(opts: WayaPayOptions) {
@@ -71,12 +65,9 @@ export class WayaPay {
     }
     this.fetch = resolvedFetch;
 
-    this.banks = new Banks(this);
-    this.accounts = new Accounts(this);
     this.identity = new Identity(this);
     this.payouts = new Payouts(this);
     this.collect = new Collect(this);
-    this.transactions = new Transactions(this);
     this.webhooks = new Webhooks(webhookSecret);
   }
 

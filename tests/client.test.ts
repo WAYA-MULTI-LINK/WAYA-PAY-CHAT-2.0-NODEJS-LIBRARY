@@ -34,7 +34,7 @@ describe('construction', () => {
 
   it('wires up every resource', () => {
     const c = makeClient(stubFetch(200, okBody({})));
-    for (const r of [c.banks, c.accounts, c.identity, c.payouts, c.collect, c.transactions]) {
+    for (const r of [c.identity, c.payouts, c.collect, c.webhooks]) {
       expect(r).toBeDefined();
     }
   });
@@ -53,7 +53,7 @@ describe('construction', () => {
 describe('transport', () => {
   it('sends auth and merchant headers', async () => {
     const fetch = capturingFetch(200, okBody([]));
-    await makeClient(fetch).banks.list();
+    await makeClient(fetch).payouts.listBanks();
     const { headers } = fetch.calls[0]!;
     expect(headers['Authorization']).toBe('Bearer WAYASECK_TEST_key');
     expect(headers['X-Merchant-Id']).toBe('MER_TEST');
@@ -63,7 +63,7 @@ describe('transport', () => {
   it('sets Content-Type only for writes', async () => {
     const fetch = capturingFetch(200, okBody({}));
     const c = makeClient(fetch);
-    await c.banks.list(); // GET
+    await c.payouts.listBanks(); // GET
     expect(fetch.calls[0]!.headers['Content-Type']).toBeUndefined();
     await c.identity.verifyBvn('22500809037'); // POST
     expect(fetch.calls[1]!.headers['Content-Type']).toBe('application/json');
@@ -77,7 +77,7 @@ describe('transport', () => {
   it('throws an api error when success is false', async () => {
     const c = makeClient(stubFetch(400, errBody('57', 'IP not whitelisted')));
     try {
-      await c.banks.list();
+      await c.payouts.listBanks();
       expect.unreachable();
     } catch (e) {
       const err = e as WayaPayError;
@@ -90,17 +90,17 @@ describe('transport', () => {
 
   it('throws an api error on a non-JSON body', async () => {
     const c = makeClient(stubFetch(502, '<html>502</html>'));
-    await expect(c.banks.list()).rejects.toMatchObject({ type: 'api', message: /Non JSON/ });
+    await expect(c.payouts.listBanks()).rejects.toMatchObject({ type: 'api', message: /Non JSON/ });
   });
 
   it('maps a network failure to a network error', async () => {
     const c = makeClient(failingFetch('connection refused'));
-    await expect(c.banks.list()).rejects.toMatchObject({ type: 'network' });
+    await expect(c.payouts.listBanks()).rejects.toMatchObject({ type: 'network' });
   });
 
   it('maps an abort to a timeout error', async () => {
     const c = makeClient(hangingFetch(), { timeout: 20 });
-    await expect(c.banks.list()).rejects.toMatchObject({ type: 'timeout' });
+    await expect(c.payouts.listBanks()).rejects.toMatchObject({ type: 'timeout' });
   });
 
   it('retries GET on a transient status', async () => {
@@ -108,7 +108,7 @@ describe('transport', () => {
       [503, errBody('99', 'down')],
       [200, okBody([])],
     ]);
-    await makeClient(fetch, { maxRetries: 2 }).banks.list();
+    await makeClient(fetch, { maxRetries: 2 }).payouts.listBanks();
     expect(fetch.calls).toBe(2);
   });
 

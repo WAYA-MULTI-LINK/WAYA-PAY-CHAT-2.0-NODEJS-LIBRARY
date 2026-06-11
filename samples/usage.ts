@@ -23,24 +23,15 @@ async function main(): Promise<void> {
   });
 
   // 1. Banks (GET — auto retried on transient failures).
-  const banks = await client.banks.list();
+  const banks = await client.payouts.listBanks();
   console.log('Banks:', banks.length);
 
   // 2. Verify a destination before you ever move money.
-  const verified = await client.accounts.verify({
+  const verified = await client.payouts.verifyAccount({
     accountNumber: '0123456789',
     bankCode: '044',
   });
   console.log('Resolved name:', verified.accountName);
-
-  // 3. Mint a virtual account for an order.
-  const vacct = await client.accounts.createDynamic({
-    accountName: 'ORDER-7821 PAYMENT',
-    customerId: 'CUST-98765',
-    referenceId: 'ORDER-7821',
-    purpose: 'Order payment',
-  });
-  console.log('Pay into:', vacct.virtualAccountNumber);
 
   // 4. BVN check.
   const bvn = await client.identity.verifyBvn('22212345678');
@@ -87,23 +78,7 @@ async function main(): Promise<void> {
     console.log('Funds confirmed — fulfil order using refNo', collectStatus.refNo);
   }
 
-  // 7. Verify a transaction. Trust status, not your own assumptions.
-  const txn = await client.transactions.verify(payout.payoutReference);
-  console.log('Txn status:', txn.status);
-
-  // 8. Reconcile every successful transaction in a window, one stream.
-  let count = 0;
-  for await (const t of client.transactions.historyAll({
-    status: 'SUCCESS',
-    from: '2026-05-01T00:00:00Z',
-    to: '2026-05-31T23:59:59Z',
-  })) {
-    count += 1;
-    void t;
-  }
-  console.log('Reconciled:', count, 'transactions');
-
-  // 9. Verify a webhook (offline demo). In production WayaPay POSTs this to your
+  // 7. Verify a webhook (offline demo). In production WayaPay POSTs this to your
   //    HTTPS endpoint; here we sign a sample body locally to show the flow end to end.
   const webhookSecret = 'WAYASECK_TEST_demo_webhook_secret';
   const rawBody = JSON.stringify({

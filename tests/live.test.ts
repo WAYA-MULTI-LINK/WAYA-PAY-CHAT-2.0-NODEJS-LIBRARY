@@ -22,13 +22,13 @@ function client(): WayaPay {
 
 describe.skipIf(!merchantId || !secretKey)('live', () => {
   it('lists banks', async () => {
-    const banks = await client().banks.list();
+    const banks = await client().payouts.listBanks();
     expect(banks.length).toBeGreaterThan(0);
     expect(banks[0]).toHaveProperty('code');
   });
 
   it('verifies an account', async () => {
-    const out = await client().accounts.verify({
+    const out = await client().payouts.verifyAccount({
       accountNumber: process.env.WAYA_TEST_ACCOUNT ?? '0123456789',
       bankCode: process.env.WAYA_TEST_BANK_CODE ?? '044',
     });

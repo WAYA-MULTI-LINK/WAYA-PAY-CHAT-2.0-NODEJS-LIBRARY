@@ -1,9 +1,44 @@
 import type { WayaPay } from '../client.js';
 import { generateReference, requireFields } from '../util.js';
-import type { PayoutInput, PayoutResult, PayoutStatusResult } from '../types.js';
+import type {
+  Bank,
+  PayoutInput,
+  PayoutResult,
+  PayoutStatusResult,
+  VerifyAccountInput,
+  VerifyAccountResult,
+} from '../types.js';
 
 export class Payouts {
   constructor(private readonly client: WayaPay) {}
+
+  /**
+   * List the supported banks with their CBN codes. GET, so it is retried
+   * automatically on a transient failure.
+   *
+   * `GET /get-bank-list`
+   */
+  async listBanks(): Promise<Bank[]> {
+    return (await this.client.request<Bank[]>('GET', '/get-bank-list')) ?? [];
+  }
+
+  /**
+   * Resolve an account number to its registered name. `bankCode` is required
+   * unless `enquiryType` is `WAYABANK`. Always verify a destination before you
+   * pay it.
+   *
+   * `POST /verify-account`
+   */
+  async verifyAccount(input: VerifyAccountInput): Promise<VerifyAccountResult> {
+    const { accountNumber, bankCode, enquiryType = 'OTHERS' } = input ?? ({} as VerifyAccountInput);
+    requireFields({ accountNumber }, ['accountNumber'], 'account verification');
+    if (enquiryType !== 'WAYABANK') {
+      requireFields({ bankCode }, ['bankCode'], 'account verification (external bank)');
+    }
+    return this.client.request<VerifyAccountResult>('POST', '/verify-account', {
+      body: { accountNumber, bankCode, enquiryType },
+    });
+  }
 
   /**
    * Initiate a bank transfer. Defaults `currency` to `NGN` and auto-generates a

@@ -14,13 +14,15 @@ source, compiled to `dist/` JavaScript with bundled `.d.ts`, plus `tests/` and
 ### Added
 
 - `WayaPay` client constructed from a typed options object (`merchantId`, `secretKey`, `baseUrl`, `timeout`, `maxRetries`, `fetch`). Defaults to the production base URL.
-- `banks.list()` — returns all supported banks and their CBN codes.
-- `accounts.verify()` — resolves an account number to its registered name; requires `bankCode` unless `enquiryType` is `WAYABANK`.
-- `accounts.createDynamic()` — mints a virtual NUBAN; defaults `mode` to `ONE_TIME` and auto-generates `referenceId`.
-- `identity.verifyBvn()` — verifies a BVN with a local 11-digit check before the network call; accepts a string or `{ bvn }`.
+- Four resources mirroring the .NET library: `payouts`, `collect`, `identity`, `webhooks`.
+- `payouts.listBanks()` — returns all supported banks and their CBN codes.
+- `payouts.verifyAccount()` — resolves an account number to its registered name; requires `bankCode` unless `enquiryType` is `WAYABANK`.
 - `payouts.initiate()` — initiates a bank transfer; defaults `currency` to `NGN` and auto-generates `reference`; `PROCESSING` means accepted, not settled.
+- `payouts.getStatus()` — returns the latest status of a payout by the reference you sent at initiation.
 - `collect.create()` — creates a payment link; defaults a one-time NGN link; requires `expiryDate` when `linkCanExpire` is true.
-- `transactions.verify()` / `transactions.history()` / `transactions.historyAll()` — single lookup, one page, and a lazy async generator that walks every page for reconciliation.
+- `collect.getStatus()` — returns the current state of a deposit by its `refNo`.
+- `identity.verifyBvn()` — verifies a BVN with a local 11-digit check before the network call; accepts a string or `{ bvn }`.
+- `webhooks.constructEvent()` / `webhooks.verifySignature()` — verify and parse inbound transaction webhooks.
 - `generateReference()` — timestamped, collision-resistant idempotency key.
 - `WayaPayError` carrying `type`, `code`, `status`, and `raw`.
 - Automatic retry with exponential backoff on GET requests (timeouts, network errors, 429, 5xx); writes never auto-retry.

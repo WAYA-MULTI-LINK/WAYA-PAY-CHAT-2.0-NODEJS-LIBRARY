@@ -54,33 +54,6 @@ export interface VerifyAccountResult {
   enquiryType: EnquiryType;
 }
 
-export interface CreateDynamicAccountInput {
-  accountName: string;
-  customerId: string;
-  referenceId?: string;
-  purpose: string;
-  mode?: string;
-}
-
-export interface DynamicAccount {
-  id: number;
-  virtualAccountNumber: string;
-  nubanNumber: string;
-  accountName: string;
-  customerId: string;
-  accountType: string;
-  status: string;
-  isActive: boolean;
-  canReceivePayments: boolean;
-  referenceId: string;
-  metadata: string;
-  totalLimit: number;
-  currentBalance: number;
-  assignedAt: string;
-  expiresAt: string;
-  createdAt: string;
-}
-
 export interface BvnResult {
   bvn: string;
   firstName: string;
@@ -157,44 +130,6 @@ export interface CollectResult {
   isSubscriptionPaymentLink: boolean;
   createdBy: number;
   createdAt: string;
-}
-
-export interface TransactionResult {
-  transactionReference: string;
-  merchantReference: string;
-  status: string;
-  amount: number;
-  currency: string;
-  channel: string;
-  customerEmail: string;
-  paidAt?: string;
-}
-
-export interface HistoryItem {
-  transactionReference: string;
-  merchantReference: string;
-  amount: number;
-  currency: string;
-  status: string;
-  channel: string;
-  customerEmail: string;
-  createdAt: string;
-}
-
-export interface HistoryFilter {
-  page?: number;
-  size?: number;
-  status?: string;
-  from?: string;
-  to?: string;
-}
-
-export interface HistoryResult {
-  items: HistoryItem[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
 }
 
 /**
