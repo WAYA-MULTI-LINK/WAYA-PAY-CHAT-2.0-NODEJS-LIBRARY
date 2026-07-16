@@ -1,5 +1,5 @@
 {
-  "name": "wayaquick-payment-sdk",
+  "name": "wayaquick-intergration",
   "version": "2.0.0",
   "description": "Node.js/TypeScript client for the WayaPay Merchant API v2: collect, payout, accounts, identity, transactions.",
   "type": "module",
