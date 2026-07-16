@@ -11,13 +11,13 @@ Node 18 or newer (uses native `fetch`). ESM only. Ships with TypeScript types.
 ## Install
 
 ```bash
-npm install wayaquick-payment-sdk
+npm install wayaquick-intergration
 ```
 
 ## Quickstart
 
 ```ts
-import { WayaPay } from 'wayaquick-payment-sdk';
+import { WayaPay } from 'wayaquick-intergration';
 
 const client = new WayaPay({
   merchantId: process.env.WAYA_MERCHANT_ID!,   // MER_...
@@ -125,7 +125,7 @@ A payout returning `PROCESSING` is accepted, not settled. Poll `payouts.getStatu
 In v2, the unique `reference` you supply is your dedup and reconciliation key. Generate a fresh one per logical operation so retries map to the original record instead of spawning duplicates. The library auto-fills it on payouts when you leave it out, or generate your own:
 
 ```ts
-import { generateReference } from 'wayaquick-payment-sdk';
+import { generateReference } from 'wayaquick-intergration';
 const ref = generateReference('PAYOUT'); // PAYOUT-1748160000000-A1B2C3D4
 ```
 
@@ -134,7 +134,7 @@ const ref = generateReference('PAYOUT'); // PAYOUT-1748160000000-A1B2C3D4
 Everything that fails throws (rejects with) a `WayaPayError`. Branch on `type` for the category and `code` for the WayaPay code.
 
 ```ts
-import { WayaPayError } from 'wayaquick-payment-sdk';
+import { WayaPayError } from 'wayaquick-intergration';
 
 try {
   await client.payouts.initiate({ /* ... */ });
