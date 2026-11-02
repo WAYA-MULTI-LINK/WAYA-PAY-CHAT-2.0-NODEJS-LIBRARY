@@ -105,46 +105,25 @@ export interface PayoutResult {
 }
 
 export interface CollectInput {
-  paymentLinkType?: string;
-  paymentLinkName: string;
-  description: string;
-  payableAmount: number;
-  currency?: string;
-  successMessage?: string;
-  phoneNumber?: string;
-  redirectLink: string;
-  customURL?: string;
-  totalCount?: number;
-  chargeInterval?: string;
-  planId?: string;
-  expiryDate?: string;
-  linkCanExpire?: boolean;
-  otherDetailsJSON?: Record<string, unknown>;
+  transactionId: string;
+  amount: string; // Quoted string, min "1.00", max 2 decimals, e.g. "1500.00"
+  currency?: string; // Defaults to "NGN"
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  description?: string;
+  meta?: Record<string, unknown>;
 }
 
 export interface CollectResult {
-  merchantId: string;
-  paymentLinkId: string;
-  paymentLinkType: string;
-  paymentLinkName: string;
-  description: string;
-  payableAmount: number;
-  currency: string;
-  amountText: string;
-  successMessage: string;
-  redirectLink: string;
-  customerPaymentLink: string;
-  shortUrl: string;
-  status: string;
-  deleted: boolean;
-  merchantKeyMode: 'TEST' | 'LIVE' | string;
-  paymentLinkReference: string;
-  expiryDate: string;
-  totalCount: number;
-  linkCanExpire: boolean;
-  isSubscriptionPaymentLink: boolean;
-  createdBy: number;
-  createdAt: string;
+  uniqueId: string;
+  transactionId: string;
+  email?: string;
+  amount?: string;
+  checkOutUrl: string;
+  merchantId?: string;
+  expiresAt?: string;
 }
 
 /**

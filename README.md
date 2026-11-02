@@ -79,21 +79,24 @@ const status = await client.payouts.getStatus(payout.merchantReference);
 ## Collect a payment
 
 ```ts
-const link = await client.collect.create({
-  paymentLinkName: 'Order #1234',
-  description: 'Order #1234 - 2 items',
-  payableAmount: 1500,
-  redirectLink: 'https://merchant.example.com/callback',
-  // paymentLinkType defaults to 'ONE_TIME_PAYMENT_LINK', currency to 'NGN'
+const res = await client.collect.create({
+  transactionId: 'TXN-V2-20260604-01',
+  amount: '1500.00',
+  currency: 'NGN',
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john@example.com',
+  phone: '08012345678',
+  description: 'Order #1234',
+  meta: { orderId: '1234' },
 });
-// Send the customer to link.shortUrl. Keep link.paymentLinkReference to reconcile.
+// Redirect the customer to res.checkOutUrl to complete payment.
+// Confirm the result on your server before fulfilling the order.
 
 // Reconcile a deposit by its refNo (the gateway transactionId / webhook orderId):
 const collectStatus = await client.collect.getStatus(refNo);
 // interpret collectStatus.status with collectionOutcome / isCollectionTerminal
 ```
-
-If you set `linkCanExpire: true`, you must also pass `expiryDate`. The library enforces it before the call leaves your server. `collect.create` also fails unless you have whitelisted your server IPs and configured payment preferences on the dashboard.
 
 ## BVN identity check
 

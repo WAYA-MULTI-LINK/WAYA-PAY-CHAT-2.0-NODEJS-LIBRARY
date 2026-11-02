@@ -5,6 +5,8 @@ import type {
   BvnInitiateInput,
   BvnInitiateResult,
   BvnResult,
+  CollectInput,
+  CollectResult,
   FetchLike,
   RequestOptions,
   WayaPayOptions,
@@ -87,6 +89,11 @@ export class WayaPay {
   /** Complete BVN verification (Step 2) with reference and OTP. */
   completeBvn(inputOrReference: string | BvnCompleteInput, maybeOtp?: string): Promise<BvnResult> {
     return this.identity.completeBvn(inputOrReference, maybeOtp);
+  }
+
+  /** Initiate payment collection and get a checkout URL. */
+  initiatePayment(payload: CollectInput): Promise<CollectResult> {
+    return this.collect.create(payload);
   }
 
   /**
