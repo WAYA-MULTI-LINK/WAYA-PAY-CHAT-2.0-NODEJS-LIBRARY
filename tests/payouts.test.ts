@@ -52,6 +52,16 @@ describe('payouts.verifyAccount', () => {
     expect(fetch.calls.length).toBe(1);
   });
 
+  it('allows WAYA-BANK without a bankCode', async () => {
+    const fetch = capturingFetch(200, okBody({ accountName: 'JOHN DOE' }));
+    const out = await makeClient(fetch).payouts.verifyAccount({
+      accountNumber: '0123456789',
+      enquiryType: 'WAYA-BANK',
+    });
+    expect(out.accountName).toBe('JOHN DOE');
+    expect(fetch.calls.length).toBe(1);
+  });
+
   it('decodes the resolved account and posts correctly', async () => {
     const fetch = capturingFetch(200, okBody({
       successful: true,

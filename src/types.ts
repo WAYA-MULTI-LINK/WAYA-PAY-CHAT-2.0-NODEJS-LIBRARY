@@ -35,7 +35,7 @@ export interface Bank {
   status: boolean;
 }
 
-export type EnquiryType = 'OTHERS' | 'WAYABANK';
+export type EnquiryType = 'OTHERS' | 'WAYA-BANK' | 'WAYABANK';
 
 export interface VerifyAccountInput {
   accountNumber: string;
@@ -51,7 +51,7 @@ export interface VerifyAccountResult {
   accountName: string;
   bankCode: string;
   bankName: string;
-  enquiryType: EnquiryType;
+  enquiryType: EnquiryType | string;
 }
 
 export interface BvnInitiateInput {

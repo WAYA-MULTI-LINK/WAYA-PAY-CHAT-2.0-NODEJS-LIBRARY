@@ -24,15 +24,16 @@ export class Payouts {
 
   /**
    * Resolve an account number to its registered name. `bankCode` is required
-   * unless `enquiryType` is `WAYABANK`. Always verify a destination before you
-   * pay it.
+   * when `enquiryType` is `OTHERS`. For intra-bank lookups against WayaBank,
+   * pass `enquiryType: 'WAYA-BANK'` (or `'WAYABANK'`) and omit `bankCode`.
+   * Always verify a destination before you pay it.
    *
    * `POST /verify-account`
    */
   async verifyAccount(input: VerifyAccountInput): Promise<VerifyAccountResult> {
     const { accountNumber, bankCode, enquiryType = 'OTHERS' } = input ?? ({} as VerifyAccountInput);
     requireFields({ accountNumber }, ['accountNumber'], 'account verification');
-    if (enquiryType !== 'WAYABANK') {
+    if (enquiryType !== 'WAYABANK' && enquiryType !== 'WAYA-BANK') {
       requireFields({ bankCode }, ['bankCode'], 'account verification (external bank)');
     }
     return this.client.request<VerifyAccountResult>('POST', '/verify-account', {
