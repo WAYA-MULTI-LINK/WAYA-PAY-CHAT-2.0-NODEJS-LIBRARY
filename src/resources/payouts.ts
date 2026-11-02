@@ -43,8 +43,9 @@ export class Payouts {
 
   /**
    * Initiate a bank transfer. Defaults `currency` to `NGN` and auto-generates a
-   * `reference` when omitted. A `PROCESSING` status means accepted, not settled —
-   * verify with the reference afterwards. This is a write: it never auto-retries.
+   * `reference` when omitted. `accountName` and `narration` are optional.
+   * A `PROCESSING` status means accepted, not settled — verify with the reference
+   * afterwards. This is a write: it never auto-retries.
    *
    * `POST /payment-payout/initiate`
    */
@@ -53,7 +54,7 @@ export class Payouts {
     if (!body['reference']) body['reference'] = generateReference('PAYOUT');
     requireFields(
       body,
-      ['amount', 'currency', 'accountNumber', 'bankCode', 'accountName', 'reference', 'narration'],
+      ['amount', 'currency', 'accountNumber', 'bankCode', 'reference'],
       'payout',
     );
     return this.client.request<PayoutResult>('POST', '/payment-payout/initiate', { body });

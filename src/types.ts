@@ -92,9 +92,9 @@ export interface PayoutInput {
   currency?: string;
   accountNumber: string;
   bankCode: string;
-  accountName: string;
+  accountName?: string;
   reference?: string;
-  narration: string;
+  narration?: string;
 }
 
 export interface PayoutResult {

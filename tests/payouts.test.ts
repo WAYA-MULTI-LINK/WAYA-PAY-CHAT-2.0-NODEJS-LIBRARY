@@ -86,6 +86,20 @@ describe('payouts.initiate', () => {
     await expect(c.payouts.initiate({ amount: 5000 } as never)).rejects.toBeInstanceOf(WayaPayError);
   });
 
+  it('allows omitting optional accountName and narration', async () => {
+    const fetch = capturingFetch(200, okBody({ status: 'PROCESSING' }));
+    await makeClient(fetch).payouts.initiate({
+      amount: 5000,
+      accountNumber: '0123456789',
+      bankCode: '044',
+      reference: 'REF-001',
+    });
+    const body = fetch.calls[0]!.body as Record<string, unknown>;
+    expect(body['accountName']).toBeUndefined();
+    expect(body['narration']).toBeUndefined();
+    expect(body['amount']).toBe(5000);
+  });
+
   it('defaults currency to NGN and auto-generates a reference', async () => {
     const fetch = capturingFetch(200, okBody({ status: 'PROCESSING' }));
     await makeClient(fetch).payouts.initiate(valid);

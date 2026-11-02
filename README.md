@@ -65,8 +65,8 @@ const payout = await client.payouts.initiate({
   amount: 25000,
   accountNumber: '0123456789',
   bankCode: '058',
-  accountName: 'JOHN DOE',     // match the verified name
-  narration: 'April salary',
+  accountName: 'JOHN DOE',     // optional, match the verified name
+  narration: 'April salary',   // optional statement narration
   // currency defaults to 'NGN', reference auto-generated if omitted
 });
 // payout.status === 'PROCESSING' means accepted, not settled
