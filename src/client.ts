@@ -1,6 +1,14 @@
 import { WayaPayError } from './errors.js';
 import { backoff } from './util.js';
-import type { FetchLike, RequestOptions, WayaPayOptions } from './types.js';
+import type {
+  BvnCompleteInput,
+  BvnInitiateInput,
+  BvnInitiateResult,
+  BvnResult,
+  FetchLike,
+  RequestOptions,
+  WayaPayOptions,
+} from './types.js';
 import { Identity } from './resources/identity.js';
 import { Payouts } from './resources/payouts.js';
 import { Collect } from './resources/collect.js';
@@ -69,6 +77,16 @@ export class WayaPay {
     this.payouts = new Payouts(this);
     this.collect = new Collect(this);
     this.webhooks = new Webhooks(webhookSecret);
+  }
+
+  /** Initiate BVN verification (Step 1). Dispatches an OTP. */
+  initiateBvn(input: string | BvnInitiateInput): Promise<BvnInitiateResult> {
+    return this.identity.initiateBvn(input);
+  }
+
+  /** Complete BVN verification (Step 2) with reference and OTP. */
+  completeBvn(inputOrReference: string | BvnCompleteInput, maybeOtp?: string): Promise<BvnResult> {
+    return this.identity.completeBvn(inputOrReference, maybeOtp);
   }
 
   /**

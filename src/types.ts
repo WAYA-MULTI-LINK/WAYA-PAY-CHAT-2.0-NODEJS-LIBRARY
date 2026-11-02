@@ -54,6 +54,21 @@ export interface VerifyAccountResult {
   enquiryType: EnquiryType;
 }
 
+export interface BvnInitiateInput {
+  bvn: string;
+}
+
+export interface BvnInitiateResult {
+  reference: string;
+  phoneNumber: string;
+  expiresAt: string;
+}
+
+export interface BvnCompleteInput {
+  reference: string;
+  otp: string;
+}
+
 export interface BvnResult {
   bvn: string;
   firstName: string;

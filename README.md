@@ -97,8 +97,15 @@ If you set `linkCanExpire: true`, you must also pass `expiryDate`. The library e
 
 ## BVN identity check
 
+Verification takes two steps: submitting the BVN sends an OTP to the phone number registered against it, and the holder's record is returned once that OTP is verified.
+
 ```ts
-const bvn = await client.identity.verifyBvn('22212345678'); // 11 digits, validated locally
+// Step 1: Initiate verification (sends OTP)
+const started = await client.identity.initiateBvn('22222222222'); // 11 digits, validated locally
+console.log(started.reference, started.phoneNumber);
+
+// Step 2: Complete verification with the received OTP
+const bvn = await client.identity.completeBvn(started.reference, '123456');
 console.log(bvn.firstName, bvn.lastName);
 // treat anything other than "False" on bvn.watchListed with care
 ```
@@ -117,7 +124,8 @@ A payout returning `PROCESSING` is accepted, not settled. Poll `payouts.getStatu
 | `client.payouts` | `getStatus` | `GET /payment-payout/status/{reference}` |
 | `client.collect` | `create` | `POST /payment-collect/initiate` |
 | `client.collect` | `getStatus` | `GET /payment-collect/status/{refNo}` |
-| `client.identity` | `verifyBvn` | `POST /identity-verification/bvn` |
+| `client.identity` | `initiateBvn` | `POST /identity-verification/bvn/initiate` |
+| `client.identity` | `completeBvn` | `POST /identity-verification/bvn/complete` |
 | `client.webhooks` | `constructEvent` / `verifySignature` | — (verifies inbound webhooks) |
 
 ## References
