@@ -19,7 +19,7 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
-                  node-version: "20"
+                  node-version: "22"
                   cache: npm
                   registry-url: "https://registry.npmjs.org"
 
@@ -31,6 +31,9 @@ jobs:
 
             - name: Test
               run: npm test
+
+            - name: Build
+              run: npm run build
 
             - name: Publish
               run: npm publish --access public --provenance
