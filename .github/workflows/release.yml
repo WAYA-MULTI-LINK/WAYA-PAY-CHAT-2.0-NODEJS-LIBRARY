@@ -21,7 +21,6 @@ jobs:
               with:
                   node-version: "22"
                   cache: npm
-                  registry-url: "https://registry.npmjs.org"
 
             - name: Install
               run: npm ci
@@ -36,6 +35,10 @@ jobs:
               run: npm run build
 
             - name: Publish
-              run: npm publish --access public --provenance
+              run: |
+                  if [ -n "$NODE_AUTH_TOKEN" ]; then
+                    echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+                  fi
+                  npm publish --access public --provenance
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
