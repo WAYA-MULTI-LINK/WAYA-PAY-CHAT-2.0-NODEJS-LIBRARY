@@ -62,17 +62,21 @@ async function main(): Promise<void> {
       break;
   }
 
-  // 6. Create a payment link.
-  const link = await client.collect.create({
-    paymentLinkName: 'Order #1234',
+  // 6. Initiate hosted payment collection checkout.
+  const checkout = await client.collect.create({
+    transactionId: generateReference('COLL'),
+    amount: '1500.00',
+    currency: 'NGN',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '08012345678',
     description: 'Order #1234 - 2 items',
-    payableAmount: 1500,
-    redirectLink: 'https://merchant.example.com/callback',
   });
-  console.log('Send customer to:', link.shortUrl);
+  console.log('Send customer to:', checkout.checkOutUrl);
 
   // 6b. Check collection status — the pull/safety-net path alongside the webhook.
-  const collectStatus = await client.collect.getStatus(link.paymentLinkReference);
+  const collectStatus = await client.collect.getStatus(checkout.transactionId);
   console.log('Collection status:', collectStatus.status, '(paid', collectStatus.amountPaid, ')');
   if (collectionOutcome(collectStatus.status) === 'succeeded') {
     console.log('Funds confirmed — fulfil order using refNo', collectStatus.refNo);

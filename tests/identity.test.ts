@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { capturingFetch, makeClient, okBody } from './helpers.js';
 
-import { describe, expect, it } from 'vitest';
-import { capturingFetch, makeClient, okBody } from './helpers.js';
-
 describe('identity.initiateBvn', () => {
   it.each(['', '123', '2250080903X', '225008090377'])(
     'rejects an invalid BVN %j before any network call',
