@@ -35,10 +35,4 @@ jobs:
               run: npm run build
 
             - name: Publish
-              run: |
-                  if [ -n "$NODE_AUTH_TOKEN" ]; then
-                    echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-                  fi
-                  npm publish --access public --provenance
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: npm publish --access public --provenance
