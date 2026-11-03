@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
+## [2.0.3] - 2026-11-03
+
+### Added
+- Added two-step BVN verification: `identity.initiateBvn()` (`POST /identity-verification/bvn/initiate`) and `identity.completeBvn()` (`POST /identity-verification/bvn/complete`) with OTP verification.
+- Updated `collect.create()` / `collect.initiate()` and `initiatePayment()` helper to match the hosted checkout API schema (`checkOutUrl`, `transactionId`, `amount`, `expiresAt`, etc.).
+- Added support for `"WAYA-BANK"` enquiry type in account verification alongside `"WAYABANK"`.
+- Made `accountName` and `narration` optional in payout requests per API specification.
+
+### Deprecated
+- `identity.verifyBvn()` is now deprecated in favor of `initiateBvn()` and `completeBvn()`.
+
 ## [2.0.0] - 2026-06-06
 
 Rewritten in TypeScript and restructured into a proper package (`src/` TypeScript
